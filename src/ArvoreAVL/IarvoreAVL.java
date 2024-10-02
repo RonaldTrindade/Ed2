@@ -13,7 +13,7 @@ public interface IarvoreAVL {
 
     public No inserir(No no,int chave );
 
-    public No remover(No raiz,int chave );
+    public No removerNo(No raiz,int chave );
 
     public void  emOrdem(No no);
 

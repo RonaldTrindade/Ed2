@@ -115,30 +115,27 @@ public class Arvore implements IarvoreAVL {
     }
 
     @Override
-    public No remover(No raiz, int chave) {
+    public No removerNo(No raiz, int chave) {
         // Passo 1: Realizar remoção padrão de BST
         if (raiz == null)
             return raiz;
 
         if (chave < raiz.getChave())
-            raiz.setEsquerda(remover(raiz.getEsquerda(), chave));
+            raiz.setEsquerda(removerNo(raiz.getEsquerda(), chave));
         else if (chave > raiz.getChave())
-            raiz.setDireita(remover(raiz.getDireita(), chave));
+            raiz.setDireita(removerNo(raiz.getDireita(), chave));
         else {
             // Nó com apenas um filho ou nenhum filho
             if ((raiz.getEsquerda() == null) || (raiz.getDireita() == null)) {
-                No temp = null;
-                if (temp == raiz.getEsquerda())
-                    temp = raiz.getDireita();
-                else
-                    temp = raiz.getEsquerda();
+                No temp = (raiz.getEsquerda() != null) ? raiz.getEsquerda() : raiz.getDireita();
 
                 // Caso 1: Sem filhos
                 if (temp == null) {
-                    temp = raiz;
                     raiz = null;
-                } else // Caso 2: Um filho
+                } else {
+                    // Caso 2: Um filho
                     raiz = temp;
+                }
             } else {
                 // Nó com dois filhos: Obter o sucessor in-order (menor na subárvore direita)
                 No temp = valorMinimoNo(raiz.getDireita());
@@ -147,15 +144,18 @@ public class Arvore implements IarvoreAVL {
                 raiz.setChave(temp.getChave());
 
                 // Remover o sucessor
-                raiz.setDireita(remover(raiz.getDireita(), temp.getChave()));
+                raiz.setDireita(removerNo(raiz.getDireita(), temp.getChave()));
             }
         }
-        // Se a árvore tinha apenas um nó
+
+        // Se a árvore tinha apenas um nó, raiz será null agora
         if (raiz == null)
             return raiz;
 
-        // Passo 2: Atualizar a altura do nó atual
-        raiz.setAltura(Math.max(altura(raiz.getEsquerda()), altura(raiz.getDireita())) + 1);
+        // Passo 2: Atualizar a altura do nó atual (somente se o nó não for null)
+        if (raiz != null) {
+            raiz.setAltura(Math.max(altura(raiz.getEsquerda()), altura(raiz.getDireita())) + 1);
+        }
 
         // Passo 3: Obter o fator de balanceamento deste nó
         int balanceamento = balanceamento(raiz);
@@ -183,9 +183,8 @@ public class Arvore implements IarvoreAVL {
         }
 
         return raiz;
-
-
     }
+
 
     @Override
     public void emOrdem(No no) {
